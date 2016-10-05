@@ -1,0 +1,69 @@
+logic CASL 
+%% Generating the concept of a field extension as a blend of the
+%% concepts of field and algebraic bi-sub-structure.
+
+spec FIELD =
+     sort Elem
+     op 0 : Elem
+     op 1 : Elem
+     op __+__ : Elem * Elem -> Elem
+     op __*__ : Elem * Elem -> Elem
+
+%%Axioms of a field
+
+ forall x : Elem; y : Elem . x + y = y + x                          %%Commutativity with +
+        forall x : Elem; y : Elem; z : Elem . (x + y) + z = x + (y + z) %%Associativity with +
+        forall x : Elem . x + 0 = x /\ 0 + x = x                              %%unit with +
+        forall x : Elem . exists x' : Elem . x' + x = 0                    %%Inverse with +
+        forall x : Elem; y : Elem . x * y = y * x                          %%Commutativity with *
+        forall x : Elem; y : Elem; z : Elem . (x * y) * z = x * (y * z)       %%Associativity with *
+        forall x : Elem . x * 1 = x /\ 1 * x = x                              %%unit with *
+        forall x : Elem . not (x = 0) => exists w : Elem . x * w = 1          %%Inverse with *
+        forall x, y, z : Elem . (x + y) * z = (x * z) + (y * z)               %%Distributivity
+
+end
+%% Axioms of a algebraic bi-sub-structure 
+
+spec ALGBISUBSTRUC =
+sorts GAlgStruc, GSubAlgStruc
+op 0 : GAlgStruc
+op 1 : GAlgStruc
+op __*__ : GAlgStruc * GAlgStruc -> GAlgStruc
+op __**__ : GSubAlgStruc * GSubAlgStruc -> GSubAlgStruc
+op __+__ : GAlgStruc * GAlgStruc -> GAlgStruc
+op __++__ : GSubAlgStruc * GSubAlgStruc -> GSubAlgStruc
+op inj2 : GSubAlgStruc -> GAlgStruc
+op one : GSubAlgStruc
+op zero : GSubAlgStruc
+
+forall x, y : GSubAlgStruc . inj2(x) = inj2(y) => x = y  %%(Ax1)%
+. inj2(zero) = 0 %%(Ax2)%
+forall x, y : GSubAlgStruc . inj2(x ++ y) = inj2(x) + inj2(y) %%(Ax3)%                                                           
+forall a : GAlgStruc; b : GSubAlgStruc
+. a + inj2(b) = 0 => exists c : GSubAlgStruc . a = inj2(c) %%(Ax4)%
+. inj2(one) = 1 %(Ax2_6)%
+forall x, y : GSubAlgStruc . inj2(x ** y) = inj2(x) * inj2(y)%%(Ax3_7)%                                                       
+forall a : GAlgStruc; b : GSubAlgStruc
+. a * inj2(b) = 1 => exists c : GSubAlgStruc . a = inj2(c) %%(Ax4_8)%
+end 
+
+spec GENERIC =
+        sort Gen
+        op 0 : Gen
+        op 1 : Gen
+        op __+__ : Gen * Gen -> Gen
+        op __*__ : Gen * Gen -> Gen
+end 
+
+view I1:
+     GENERIC to FIELD =
+     Gen |-> Elem, __ + __ |-> __ + __ , __ * __ |-> __ * __ ,0 |-> 0, 1 |-> 1
+end 
+
+view I2: 
+     GENERIC to ALGBISUBSTRUC =
+     Gen |-> GAlgStruc, __ + __ |-> __ + __, __ * __ |-> __ * __, 0 |-> 0, 1 |-> 1
+end
+
+spec Colimit = combine I1, I2 
+     

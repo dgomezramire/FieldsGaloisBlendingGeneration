@@ -1,0 +1,62 @@
+logic CASL 
+
+%% the concept of a distributive action of a group over an algebraic struture as
+%% a blend between the concepts of the action of a group on a set and the concept 
+%% of a space of distribution
+
+spec ACTIONGROUP= 
+
+     sort Groupelem
+     sort Setelem
+     op Id : Groupelem
+     op __ o __: Groupelem * Groupelem -> Groupelem 
+     op __ act __: Groupelem * Setelem -> Setelem 
+
+%% Axioms of a group for Groupelem
+        forall x : Groupelem; y : Groupelem; z : Groupelem . (x o y) o z = x o (y o z) %%Associativity with o
+        forall x : Groupelem . x o Id = x /\ Id o x = x                                    %%unit with o
+        forall x : Groupelem . exists x' : Groupelem . x' o x = Id                       %%Inverse with o 
+
+%% Axiom for the action 
+  forall f : Groupelem; g : Groupelem; a : Setelem . (f o g) act a = f act (g act a) %% compatibility condition
+  forall a : Setelem . Id act a = a %% identity condition
+
+end 
+
+%% Axiom of a quite more generalized version of an space of distribution
+ 
+spec DISTRSPACE= 
+     sort Elem
+     sort Gelem
+     op __ * __: Gelem * Elem -> Elem 
+     op __ plus __: Elem * Elem -> Elem 
+
+     forall n : Gelem, a : Elem; b : Elem . n * (a plus b) = (n * a) plus (n * b)
+
+end
+
+spec GENERIC =
+     sort GGroupelem
+     sort GSetelem
+     op __ action __: GGroupelem * GSetelem -> GSetelem
+
+end
+
+view I1: 
+      GENERIC to ACTIONGROUP = 
+     GGroupelem |-> Groupelem, GSetelem |-> Setelem, __ action __ |-> __ act __ 
+end
+
+view I2:
+      GENERIC to DISTRSPACE =
+     GGroupelem |-> Gelem, GSetelem |-> Elem, __ action __ |-> __ * __
+
+spec Colimit= combine I1, I2
+
+
+
+
+
+
+
+

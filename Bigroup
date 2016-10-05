@@ -1,0 +1,53 @@
+logic CASL 
+%%The notion of a bi-group (i.e., a field without the distributive condition)
+%% as a blend of two slightly modified notions of abelian group
+
+spec GROUP1=
+     sort Element
+     ops 0,f: Element;
+         __ + __: Element * Element -> Element 
+     sort Elem2= { x: Element. not x = 0 }
+%% Axioms of an Abelian Group with at least two elements.
+        forall x : Element; y : Element . x + y = y + x                          %%Commutativity with +
+        forall x : Element; y : Element; z : Element . (x + y) + z = x + (y + z) %%Associativity with +
+        forall x : Element . x + 0 = x /\ 0 + x = x                              %%unit with +
+        forall x : Element . exists x' : Element . x' + x = 0                    %%Inverse with +
+        . not (f = 0)
+        
+end
+%% Axioms of a punctured abelian group 
+spec GROUP2=
+     sort ElemPlus
+     op   zero: ElemPlus;
+     sort Elem3={ x: ElemPlus. not x = zero }
+     ops 1: Elem3;
+         __ * __: ElemPlus * ElemPlus -> ElemPlus
+
+       forall x : Elem3; y : Elem3 . x * y = y * x                      %%Commutativity with *
+       forall x : Elem3; y : Elem3; z :Elem3 . (x * y) * z = x * (y * z) %%Associativity with *
+       forall x : Elem3 . x * 1 = x /\ 1 * x = x                         %%Unit with *
+       forall x : Elem3 . exists x' : Elem3 . x' * x = 1                  %%Inverse with *
+       forall x : ElemPlus . x * zero = zero /\ zero * x = zero                       %% collapse of * regarding to "zero"
+end 
+
+spec GENERIC =
+     sort Elem
+     op   elt: Elem
+     sort SubElem={ x : Elem . not x = elt }
+end
+
+view I1:
+     GENERIC to GROUP1 =
+     Elem |-> Element, elt |-> 0, SubElem |-> Elem2 
+end 
+
+view I2: 
+     GENERIC to GROUP2 =
+     Elem |-> ElemPlus, elt |-> zero, SubElem |-> Elem3
+end 
+
+spec Colimit = combine I1, I2
+
+
+
+

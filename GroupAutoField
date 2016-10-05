@@ -1,0 +1,80 @@
+logic CASL 
+
+%% the group of automorphisms of a field as a blend of the concepts of the biyections of a field 
+%% which are group homomorphisms with the addition and the concept of a space of distribution
+
+spec BIYECTIONADDFIELD=
+ 
+sorts Elem, GGroupelem
+op Id : GGroupelem
+op __o__ : GGroupelem * GGroupelem -> GGroupelem
+op __action__ : GGroupelem * Elem -> Elem
+op __mul__ : Elem * Elem -> Elem
+op __plus__ : Elem * Elem -> Elem
+op one : Elem
+op zero : Elem
+
+forall x, y, z : GGroupelem . (x o y) o z = x o (y o z) %%(Ax1)%
+forall x : GGroupelem . x o Id = x /\ Id o x = x %%(Ax2)%
+forall x : GGroupelem . exists x' : GGroupelem . x' o x = Id
+                                                           %%(Ax3)%
+forall f, g : GGroupelem; a : Elem
+. (f o g) action a = f action (g action a)                 %%(Ax4)%
+forall a : Elem . Id action a = a %(Ax5)%
+forall n : GGroupelem; a, b : Elem
+. n action (a plus b) = (n action a) plus (n action b)     %%(Ax6)%
+forall x, y : Elem . x plus y = y plus x %(Ax1_7)%
+forall x, y, z : Elem . (x plus y) plus z = x plus (y plus z)
+                                                         %%(Ax2_8)%
+forall x : Elem . x plus zero = x /\ zero plus x = x %%(Ax3_9)%
+forall x : Elem . exists x' : Elem . x' plus x = zero %%(Ax4_10)%
+forall x, y : Elem . x mul y = y mul x %%(Ax5_11)%
+forall x, y, z : Elem . (x mul y) mul z = x mul (y mul z)
+                                                        %%(Ax6_12)%
+forall x : Elem . x mul one = x /\ one mul x = x %%(Ax7)%
+forall x : Elem . not x = zero => exists w : Elem . x mul w = one
+                                                           %%(Ax8)%
+forall x, y, z : Elem . (x plus y) mul z = (x mul z) plus (y mul z)
+                                                           %%(Ax9)%
+. not (zero = one) %% non trivial fields
+end 
+
+spec DISTRSPACE= 
+     sort Elemnew
+     sort Gelem
+     op __ * __: Gelem * Elemnew -> Elemnew 
+     op __ oper __: Elemnew * Elemnew -> Elemnew 
+
+     forall n : Gelem, a : Elemnew; b : Elemnew . n * (a oper b) = (n * a) oper (n * b)
+
+end
+
+spec GENERIC=
+     sort Elems, Grelems
+     op __ times __ : Elems * Elems -> Elems
+     op __ act __ : Grelems * Elems -> Elems
+end
+
+view I1:  
+     GENERIC to BIYECTIONADDFIELD =
+     Elems |-> Elem, Grelems |-> GGroupelem, __ times __ |-> __ mul __, __ act __ |-> __ action __
+end 
+
+view I2: 
+     GENERIC to DISTRSPACE =
+     Elems |-> Elemnew, Grelems |-> Gelem, __ times __ |-> __ oper __, __ act __ |-> __ * __
+end
+
+spec Colimit = combine I1, I2 
+     
+
+
+
+
+
+
+
+
+
+
+

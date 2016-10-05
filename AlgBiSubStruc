@@ -1,0 +1,55 @@
+logic CASL 
+%% the concept of a algebraic bisubstructure as a trivial blend
+%% of two times the concept of an algebraic substructure
+
+
+
+
+spec SUBALGSTRUC =
+     sort SubAlgStruc 
+     sort AlgStruc
+     op 0 : AlgStruc
+     op zero : SubAlgStruc
+     op __+__ : AlgStruc * AlgStruc -> AlgStruc
+     op __++__ : SubAlgStruc * SubAlgStruc -> SubAlgStruc 
+     ops inj : SubAlgStruc -> AlgStruc
+        
+        forall x, y : SubAlgStruc . inj(x) = inj(y) => x = y
+        . inj(zero)=0
+        forall x, y : SubAlgStruc . inj(x ++ y) = inj(x) + inj(y) 
+        forall a : AlgStruc; b : SubAlgStruc . a + inj(b) = 0 => exists c : SubAlgStruc . a = inj(c)
+end
+
+spec SUBALGSTRUC2 =
+     sort SubAlgStruc2 
+     sort AlgStruc2
+     op 1 : AlgStruc2
+     op one : SubAlgStruc2
+     op __*__ : AlgStruc2 * AlgStruc2 -> AlgStruc2
+     op __**__ : SubAlgStruc2 * SubAlgStruc2 -> SubAlgStruc2  
+     ops inj2 : SubAlgStruc2 -> AlgStruc2
+        
+        forall x, y : SubAlgStruc2 . inj2(x) = inj2(y) => x = y
+        . inj2(one)=1
+        forall x, y : SubAlgStruc2 . inj2(x ** y) = inj2(x) * inj2(y)
+        forall a : AlgStruc2; b : SubAlgStruc2 . a * inj2(b) = 1 => exists c : SubAlgStruc2 . a = inj2(c)
+end
+
+spec GENERIC =
+     sort GSubAlgStruc
+     sort GAlgStruc
+     op Ginj: GSubAlgStruc -> GAlgStruc
+end
+
+view I1:
+     GENERIC to SUBALGSTRUC =
+     GSubAlgStruc |-> SubAlgStruc, GAlgStruc |-> AlgStruc, Ginj |-> inj
+end
+
+view I2: 
+     GENERIC to SUBALGSTRUC2 =
+     GSubAlgStruc |-> SubAlgStruc2, GAlgStruc |-> AlgStruc2, Ginj |-> inj2
+end 
+
+spec Colimit = combine I1, I2
+

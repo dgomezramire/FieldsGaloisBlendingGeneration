@@ -1,0 +1,88 @@
+logic CASL 
+%% The concept the group of automorphisms of a field extension as a blend
+%% of the concepts of the group of automorphisms of a field and the concept of a bialgebraic substructure
+
+spec AUTOMORPHSPACE =
+sorts Elems, Grelems
+op Id : Grelems
+op __action__ : Grelems * Elems -> Elems
+op __o__ : Grelems * Grelems -> Grelems
+op __plus__ : Elems * Elems -> Elems
+op __times__ : Elems * Elems -> Elems
+op one : Elems
+op zero : Elems
+
+forall x, y, z : Grelems . (x o y) o z = x o (y o z) %(Ax1)%
+forall x : Grelems . x o Id = x /\ Id o x = x %(Ax2)%
+forall x : Grelems . exists x' : Grelems . x' o x = Id %(Ax3)%
+forall f, g : Grelems; a : Elems
+. (f o g) action a = f action (g action a)                 %(Ax4)%
+forall a : Elems . Id action a = a %(Ax5)%
+forall n : Grelems; a, b : Elems
+. n action (a plus b) = (n action a) plus (n action b)     %(Ax6)%
+forall x, y : Elems . x plus y = y plus x %(Ax1_7)%
+forall x, y, z : Elems . (x plus y) plus z = x plus (y plus z) %(Ax8)%
+forall x : Elems . x plus zero = x /\ zero plus x = x %(Ax9)%
+forall x : Elems . exists x' : Elems . x' plus x = zero %(Ax10)%
+forall x, y : Elems . x times y = y times x %(Ax11)%
+forall x, y, z : Elems . (x times y) times z = x times (y times z)%(Ax12)%
+forall x : Elems . x times one = x /\ one times x = x %(Ax13)%
+forall x : Elems
+. not x = zero => exists w : Elems . x times w = one      %(Ax14)%
+forall x, y, z : Elems
+. (x plus y) times z = (x times z) plus (y times z)       %(Ax15)%
+. not zero = one %(Ax16)%
+forall n : Grelems; a, b : Elems
+. n action (a times b) = (n action a) times (n action b)  %(Ax1_17)%
+end
+
+%% Axioms of a bialgebraic substructure 
+
+spec BISUBALGSTRUC =
+sorts GAlgStruc, GSubAlgStruc
+op 0 : GAlgStruc
+op 1 : GAlgStruc
+op __*__ : GAlgStruc * GAlgStruc -> GAlgStruc
+op __**__ : GSubAlgStruc * GSubAlgStruc -> GSubAlgStruc
+op __+__ : GAlgStruc * GAlgStruc -> GAlgStruc
+op __++__ : GSubAlgStruc * GSubAlgStruc -> GSubAlgStruc
+op inj2 : GSubAlgStruc -> GAlgStruc
+op one : GSubAlgStruc
+op zero : GSubAlgStruc
+
+forall x, y : GSubAlgStruc . inj2(x) = inj2(y) => x = y  %%(Ax1)%
+. inj2(zero) = 0 %%(Ax2)%
+forall x, y : GSubAlgStruc . inj2(x ++ y) = inj2(x) + inj2(y) %%(Ax3)%                                                           
+forall a : GAlgStruc; b : GSubAlgStruc
+. a + inj2(b) = 0 => exists c : GSubAlgStruc . a = inj2(c) %%(Ax4)%
+. inj2(one) = 1 %(Ax2_6)%
+forall x, y : GSubAlgStruc . inj2(x ** y) = inj2(x) * inj2(y)%%(Ax3_7)%                                                       
+forall a : GAlgStruc; b : GSubAlgStruc
+. a * inj2(b) = 1 => exists c : GSubAlgStruc . a = inj2(c) %%(Ax4_8)%
+end 
+
+spec GENERIC =
+     sort Fieldelem
+     ops 0,1 : Fieldelem
+     op __ add __ : Fieldelem * Fieldelem -> Fieldelem
+     op __ mul __ : Fieldelem * Fieldelem -> Fieldelem 
+end
+
+view I1: GENERIC to AUTOMORPHSPACE =
+         Fieldelem |-> Elems, 0 |-> zero, 1 |-> one, __ add __ |-> __ plus __, __ mul __ |-> __ times __
+end
+
+view I2: GENERIC to BISUBALGSTRUC =
+         Fieldelem |-> GAlgStruc, 0 |-> 0, 1 |-> 1, __ add __ |-> __ + __, __ mul __ |-> __ * __
+end 
+
+spec Colimit = combine I1, I2
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,49 @@
+logic CASL 
+%%The concept of a field 
+%% as a blend of the concept of a Bi-group and the concept of a Distributive Space
+
+spec BIGROUP=
+     sort Element
+     ops 0,1: Element;
+         __ + __: Element * Element -> Element 
+         __ * __: Element * Element -> Element
+     sort Elem2= { x: Element. not x = 0 }
+        forall x : Element; y : Element . x + y = y + x                          %%Commutativity with +
+        forall x : Element; y : Element; z : Element . (x + y) + z = x + (y + z) %%Associativity with +
+        forall x : Element . x + 0 = x /\ 0 + x = x                              %%unit with +
+        forall x : Element . exists x' : Element . x' + x = 0                    %%Inverse with +
+        . not (1 = 0)
+       forall x : Element; y : Element . x * y = y * x                      %%Commutativity with *
+       forall x : Element; y : Element; z :Element . (x * y) * z = x * (y * z) %%Associativity with *
+       forall x : Element . x * 1 = x /\ 1 * x = x                         %%Unit with *
+       forall x : Elem2 . exists x' : Elem2 . x' * x = 1                  %%Inverse with *
+end 
+
+spec DISTRISPACE=
+     sort Elemdistr
+     ops __ oo __: Elemdistr * Elemdistr -> Elemdistr
+         __ && __: Elemdistr * Elemdistr -> Elemdistr
+     
+         forall p : Elemdistr; q : Elemdistr; r : Elemdistr . p && (q oo r) = (p && q) oo (p && r) 
+                  /\ (q oo r) && p = (q && p) oo (r && p)
+
+end
+
+spec GEN=
+     sort Elem
+     ops __ + __: Elem * Elem -> Elem 
+         __ * __: Elem * Elem -> Elem 
+
+end
+
+view I1:
+     GEN to BIGROUP =
+     Elem  |-> Element, __ + __ |-> __ + __, __ * __ |-> __ * __
+end
+
+view I2:
+     GEN to DISTRISPACE =
+     Elem  |-> Elemdistr, __ + __ |-> __ oo __, __ * __ |-> __ && __ 
+end 
+
+spec Colimit = combine I1, I2

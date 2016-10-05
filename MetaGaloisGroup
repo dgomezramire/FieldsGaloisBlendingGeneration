@@ -1,0 +1,88 @@
+logic CASL 
+%% The concept of Aut(E/F) (the Galois Group, if the extension is Galois) of a field extension as a blend of the concepts of the group of automorphisms of a field extension 
+%% and the concept of an space of fixed points of a collection of endomorphisms
+
+%% Space of Automorphisms of a field extension
+spec AUTOFIELDEXT =
+sorts Fieldelem, GSubAlgStruc, Grelems
+op 0 : Fieldelem
+op 1 : Fieldelem
+op Id : Grelems
+op __**__ : GSubAlgStruc * GSubAlgStruc -> GSubAlgStruc
+op __++__ : GSubAlgStruc * GSubAlgStruc -> GSubAlgStruc
+op __action__ : Grelems * Fieldelem -> Fieldelem
+op __o__ : Grelems * Grelems -> Grelems
+op __plus__ : Fieldelem * Fieldelem -> Fieldelem
+op __times__ : Fieldelem * Fieldelem -> Fieldelem
+op inj2 : GSubAlgStruc -> Fieldelem
+op one : GSubAlgStruc
+op zero : GSubAlgStruc
+
+forall x, y, z : Grelems . (x o y) o z = x o (y o z) %(Ax1)%
+forall x : Grelems . x o Id = x /\ Id o x = x %(Ax2)%
+forall x : Grelems . exists x' : Grelems . x' o x = Id %(Ax3)%
+forall f, g : Grelems; a : Fieldelem
+. (f o g) action a = f action (g action a)                 %(Ax4)%
+forall a : Fieldelem . Id action a = a %(Ax5)%
+forall n : Grelems; a, b : Fieldelem
+. n action (a plus b) = (n action a) plus (n action b)     %(Ax6)%
+forall x, y : Fieldelem . x plus y = y plus x %(Ax1_7)%
+forall x, y, z : Fieldelem . (x plus y) plus z = x plus (y plus z)%(Ax8)%                                                           
+forall x : Fieldelem . x plus 0 = x /\ 0 plus x = x %(Ax9)%
+forall x : Fieldelem . exists x' : Fieldelem . x' plus x = 0 %(Ax10)%                                                         
+forall x, y : Fieldelem . x times y = y times x %(Ax11)%
+forall x, y, z : Fieldelem
+. (x times y) times z = x times (y times z)               %(Ax12)%
+forall x : Fieldelem . x times 1 = x /\ 1 times x = x %(Ax13)%
+forall x : Fieldelem
+. not x = 0 => exists w : Fieldelem . x times w = 1       %(Ax14)%
+forall x, y, z : Fieldelem
+. (x plus y) times z = (x times z) plus (y times z)       %(Ax15)%
+. not 0 = 1 %(Ax16)%
+forall n : Grelems; a, b : Fieldelem
+. n action (a times b) = (n action a) times (n action b)%(Ax1_17)%                                                        
+forall x, y : GSubAlgStruc . inj2(x) = inj2(y) => x = y %(Ax1_18)%
+. inj2(zero) = 0 %(Ax2_19)%
+forall x, y : GSubAlgStruc . inj2(x ++ y) = inj2(x) plus inj2(y)%(Ax3_20)%                                                        
+forall a : Fieldelem; b : GSubAlgStruc
+. a plus inj2(b) = 0 => exists c : GSubAlgStruc . a = inj2(c)%(Ax4_21)%                                                        
+. inj2(one) = 1 %(Ax2_6)%
+forall x, y : GSubAlgStruc . inj2(x ** y) = inj2(x) times inj2(y)%(Ax6_22)%                                                        
+forall a : Fieldelem; b : GSubAlgStruc
+. a times inj2(b) = 1 => exists c : GSubAlgStruc . a = inj2(c)%(Ax7)%
+end
+
+spec FIXEDPOINTSPACE =	
+     sort Fixedelems, Elems, Functions
+     op __ eval __ : Functions * Elems -> Elems 
+     op immer: Fixedelems -> Elems
+%% condition guaranteeing that immer(Fixedelems) is the fixed point set of Functions
+     forall x : Elems . (forall f : Functions . f eval x = x <=> exists y : Fixedelems . immer(y) = x)    
+end 
+spec GENERIC =
+     sorts SubStruc, Struc, Automorphs
+     op __ evalu __ : Automorphs * Struc -> Struc
+     op inclu : SubStruc -> Struc
+end
+
+view I1: GENERIC to AUTOFIELDEXT =
+        SubStruc |-> GSubAlgStruc, Struc |-> Fieldelem, __ evalu __ |-> __ action __, inclu |-> inj2
+end
+
+view I2: GENERIC to FIXEDPOINTSPACE =
+        SubStruc |-> Fixedelems, Struc |-> Elems, Automorphs |-> Functions, __ evalu __ |-> __ eval __, inclu |-> immer
+end
+
+spec Colimit = combine I1, I2                               
+
+
+
+
+
+
+
+
+
+
+
+

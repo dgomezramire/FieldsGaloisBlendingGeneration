@@ -1,0 +1,62 @@
+logic CASL 
+
+%% the concept of space of biyections of a field which are homomorphisms with the addition operation as a blend
+%% of the concepts of a distributive action on a set and the one of a field
+
+spec DISTRIBUTIVEACTION= 
+    sorts GGroupelem, GSetelem
+    op Id : GGroupelem
+    op __o__ : GGroupelem * GGroupelem -> GGroupelem
+    op __action__ : GGroupelem * GSetelem -> GSetelem
+    op __plus__ : GSetelem * GSetelem -> GSetelem
+
+    forall x, y, z : GGroupelem . (x o y) o z = x o (y o z) %%(Ax1)%
+    forall x : GGroupelem . x o Id = x /\ Id o x = x %%(Ax2)%
+    forall x : GGroupelem . exists x' : GGroupelem . x' o x = Id   %%(Ax3)%
+    forall f, g : GGroupelem; a : GSetelem
+    . (f o g) action a = f action (g action a)                 %%(Ax4)%
+    forall a : GSetelem . Id action a = a %%(Ax5)%
+    forall n : GGroupelem; a, b : GSetelem
+    . n action (a plus b) = (n action a) plus (n action b)   %%(Ax1_6)%
+end 
+
+spec FIELD= 
+    %%Axioms of a field for ElemfieldE
+        sort ElemfieldE
+        ops zero, one : ElemfieldE
+        ops __ add __ : ElemfieldE * ElemfieldE -> ElemfieldE
+        ops __ mul __ : ElemfieldE * ElemfieldE -> ElemfieldE 
+        forall x : ElemfieldE; y : ElemfieldE . x add y = y add x                          %%Commutativity with add
+        forall x : ElemfieldE; y : ElemfieldE; z : ElemfieldE . (x add y) add z = x add (y add z) %%Associativity with add
+        forall x : ElemfieldE . x add zero = x /\ zero add x = x                              %%unit with add line 32
+        forall x : ElemfieldE . exists x' : ElemfieldE . x' add x = zero                    %%Inverse with add
+        forall x : ElemfieldE; y : ElemfieldE . x mul y = y mul x                          %%Commutativity with mul
+        forall x : ElemfieldE; y : ElemfieldE; z : ElemfieldE . (x mul y) mul z = x mul (y mul z)       %%Associativity with mul
+        forall x : ElemfieldE . x mul one = x /\ one mul x = x                              %%unit with mul
+        forall x : ElemfieldE . not (x = zero) => exists w : ElemfieldE . x mul w = one          %%Inverse with mul
+        forall x, y, z : ElemfieldE . (x add y) mul z = (x mul z) add (y mul z)               %%Distributivity
+end 
+
+spec GENERIC= 
+      sort Elem
+      op __ + __: Elem * Elem -> Elem     
+end
+
+view I1:
+      GENERIC to DISTRIBUTIVEACTION = 
+      Elem |-> GSetelem, __ + __ |-> __ plus __ 
+end 
+
+view I2:
+      GENERIC to FIELD =
+      Elem |-> ElemfieldE, __ + __ |-> __ add __ 
+end 
+
+spec Colimit= combine I1, I2
+
+
+
+
+
+
+
