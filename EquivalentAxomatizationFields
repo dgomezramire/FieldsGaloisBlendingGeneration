@@ -1,0 +1,35 @@
+sorts Gen, SubAlgStruc
+op 0 : Gen
+op 1 : Gen
+op __*__ : Gen * Gen -> Gen
+op __**__ : SubAlgStruc * SubAlgStruc -> SubAlgStruc
+op __+__ : Gen * Gen -> Gen
+op __++__ : SubAlgStruc * SubAlgStruc -> SubAlgStruc
+op inj : SubAlgStruc -> Gen
+op one : SubAlgStruc
+op zero : SubAlgStruc
+forall x, y : Gen . x + y = y + x %(Ax1)%
+forall x, y, z : Gen . (x + y) + z = x + (y + z) %(Ax2)%
+forall x : Gen . x + 0 = x /\ 0 + x = x %(Ax3)%
+forall x : Gen . exists x' : Gen . x' + x = 0 %(Ax4)%
+forall x, y : Gen . x * y = y * x %(Ax5)%
+forall x, y, z : Gen . (x * y) * z = x * (y * z) %(Ax6)%
+forall x : Gen . x * 1 = x /\ 1 * x = x %(Ax7)%
+forall x : Gen . not x = 0 => exists w : Gen . x * w = 1 
+%(Ax8)%
+forall x, y, z : Gen . (x + y) * z = (x * z) + (y * z) 
+%(Ax9)%
+forall x, y : SubAlgStruc . inj(x) = inj(y) => x = y 
+%(Ax1_10)%
+. inj(zero) = 0 %(Ax2_11)%
+. inj(one) = 1 %(Ax3_12)%
+forall x, y : SubAlgStruc
+. inj(x ++ y) = inj(x) + inj(y) 
+/\ inj(x ** y) = inj(x) * inj(y)
+%(Ax4_13)%
+forall a : Gen; b : SubAlgStruc
+. a + inj(b) = 0 => exists c : SubAlgStruc . a = inj(c) 
+%(Ax5_14)%
+forall a : Gen; b : SubAlgStruc
+. a * inj(b) = 1 => exists c : SubAlgStruc . a = inj(c) 
+%(Ax6_15)%
