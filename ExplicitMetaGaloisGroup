@@ -1,0 +1,57 @@
+sorts Automorphs, Struc, SubStruc
+op 0 : Struc
+op 1 : Struc
+op Id : Automorphs
+op __**__ : SubStruc * SubStruc -> SubStruc
+op __++__ : SubStruc * SubStruc -> SubStruc
+op __evalu__ : Automorphs * Struc -> Struc
+op __o__ : Automorphs * Automorphs -> Automorphs
+op __plus__ : Struc * Struc -> Struc
+op __times__ : Struc * Struc -> Struc
+op inj2 : SubStruc -> Struc
+op one : SubStruc
+op zero : SubStruc
+
+forall x, y, z : Automorphs . (x o y) o z = x o (y o z) 
+%(Ax1)%
+forall x : Automorphs . x o Id = x /\ Id o x = x %(Ax2)%
+forall x : Automorphs . exists x' : Automorphs . x' o x = Id
+%(Ax3)%                                                         
+forall f, g : Automorphs; a : Struc
+. (f o g) evalu a = f evalu (g evalu a)%(Ax4)%
+forall a : Struc . Id evalu a = a %(Ax5)%
+forall n : Automorphs; a, b : Struc
+. n evalu (a plus b) = (n evalu a) plus (n evalu b)        
+%(Ax6)%
+forall x, y : Struc . x plus y = y plus x %(Ax1_7)%
+forall x, y, z : Struc 
+. (x plus y) plus z = x plus (y plus z) %(Ax8)%                                                         
+forall x : Struc . x plus 0 = x /\ 0 plus x = x %(Ax9)%
+forall x : Struc . exists x' : Struc . x' plus x = 0 
+%(Ax10)%
+forall x, y : Struc . x times y = y times x %(Ax11)%
+forall x, y, z : Struc 
+. (x times y) times z = x times (y times z) %(Ax12)%                                                       
+forall x : Struc . x times 1 = x /\ 1 times x = x %(Ax13)%
+forall x : Struc 
+. not x = 0 => exists w : Struc . x times w = 1 %(Ax14)%                                                        
+forall x, y, z : Struc
+. (x plus y) times z = (x times z) plus (y times z)%(Ax15)%
+. not 0 = 1 %(Ax16)%
+forall n : Automorphs; a, b : Struc
+. n evalu (a times b) = (n evalu a) times (n evalu b) %(Ax1_17)%
+forall x, y : SubStruc . inj2(x) = inj2(y) => x = y %(Ax1_18)%
+. inj2(zero) = 0 %(Ax2_19)%
+forall x, y : SubStruc . inj2(x ++ y) = inj2(x) plus inj2(y)
+%(Ax3_20)%                                                     
+forall a : Struc; b : SubStruc
+. a plus inj2(b) = 0 => exists c : SubStruc . a = inj2(c) 
+%(Ax4_21)%                                                     
+. inj2(one) = 1 %(Ax2_6)%
+forall x, y : SubStruc . inj2(x ** y) = inj2(x) times inj2(y)
+%(Ax6_22)%                                                      
+forall a : Struc; b : SubStruc
+. a times inj2(b) = 1 => exists c : SubStruc . a = inj2(c) 
+%(Ax7)%
+forall x : Struc; f : Automorphs
+. f evalu x = x <=> exists y : SubStruc . inj2(y) = x %(Ax1_25)%
